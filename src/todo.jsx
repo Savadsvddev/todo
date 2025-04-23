@@ -22,14 +22,18 @@ const Todo = () => {
       return;
     }
 
+    // alert(indexToEdit);
     if (indexToEdit) {
       //edit fucntion
-      settodolist((prevTodo) =>
-        prevTodo.map((item, index) =>
+      settodolist((prevTodo) => {
+        let arr = prevTodo.map((item, index) =>
           index === indexToEdit ? { ...item, title: addelement } : item
-        )
-      );
+        );
 
+        localStorage.setItem("data", JSON.stringify(arr));
+        return arr;
+      });
+      setTimeout(() => setIndexToEdit(), 1000);
     } else {
       // add function
 
@@ -37,15 +41,24 @@ const Todo = () => {
         ...prev,
         { title: addelement, status: "To Do", isCompleted: false },
       ]);
-      localStorage.setItem("data", JSON.stringify([...todolist, { title: addelement, status: "To Do", isCompleted: false }]));
+      localStorage.setItem(
+        "data",
+        JSON.stringify([
+          ...todolist,
+          { title: addelement, status: "To Do", isCompleted: false },
+        ])
+      );
     }
     setaddelement("");
   };
 
-  const removeFromList = (title) => {
-    settodolist(todolist?.filter((item) => item?.title !== title));
-    localStorage.setItem("data", JSON.stringify((todolist?.filter((item) => item?.title !== title))));
-    
+  const removeFromList = (indexToRemove) => {
+    console.log(indexToRemove);
+    settodolist(todolist?.filter((item, index) => indexToRemove !== index));
+    localStorage.setItem(
+      "data",
+      JSON.stringify(todolist?.filter((item, index) => indexToRemove !== index))
+    );
   };
 
   const editfromlist = (index) => {
@@ -64,7 +77,8 @@ const Todo = () => {
   };
   useEffect(() => {
     // console.log(JSON.parse(localStorage.getItem("data")))
-    localStorage.getItem("data") && settodolist(JSON.parse(localStorage.getItem("data")))
+    localStorage.getItem("data") &&
+      settodolist(JSON.parse(localStorage.getItem("data")));
   }, []);
 
   return (
@@ -108,33 +122,11 @@ const Todo = () => {
               <MdEdit size={25} onClick={() => editfromlist(index)} />
               <MdOutlineDelete
                 size={25}
-                onClick={() => removeFromList(item.title)}
+                onClick={() => removeFromList(index)}
               />
             </div>
           </div>
         ))}
-
-        {/* ,
-        <div className="contents">
-          <div className="static">
-            <img className="text" src={round} />
-            <p className="text">build a todo app</p>
-          </div>
-          <div className="edit">
-            <MdEdit size={25} />
-            <MdOutlineDelete size={25} />
-          </div>
-        </div>
-        <div className="contents">
-          <div className="static">
-            <img className="text" src={round} />
-            <p className="text"> build a todo app</p>
-          </div>
-          <div className="edit">
-            <MdEdit size={25} />
-            <MdOutlineDelete size={25} />
-          </div>
-        </div> */}
       </div>
     </div>
   );
