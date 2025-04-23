@@ -23,14 +23,15 @@ const Todo = () => {
     }
 
     // alert(indexToEdit);
-    if (indexToEdit) {
+    if (indexToEdit || indexToEdit == 0) {//0,"",undefined, null
       //edit fucntion
       settodolist((prevTodo) => {
         let arr = prevTodo.map((item, index) =>
           index === indexToEdit ? { ...item, title: addelement } : item
         );
 
-        localStorage.setItem("data", JSON.stringify(arr));
+        // localStorage.setItem("data", JSON.stringify(arr));
+        // alert(JSON.stringify(arr))
         return arr;
       });
       setTimeout(() => setIndexToEdit(), 1000);
