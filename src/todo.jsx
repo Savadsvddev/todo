@@ -13,21 +13,24 @@ const Todo = () => {
   const [todolist, settodolist] = useState([]);
   const [addelement, setaddelement] = useState();
   const [indexToEdit, setIndexToEdit] = useState();
+  const [checkDate, setcheckDate] = useState();
+  const [postDescription, setPostDescription] = useState();
 
   const addList = () => {
     //validation
 
-    if (!addelement) {
+    if (!addelement||!checkDate||!postDescription) {
       alert("please add something");
       return;
     }
 
     // alert(indexToEdit);
-    if (indexToEdit || indexToEdit == 0) {//0,"",undefined, null
+    if (indexToEdit || indexToEdit == 0) {
+      //0,"",undefined, null
       //edit fucntion
       settodolist((prevTodo) => {
         let arr = prevTodo.map((item, index) =>
-          index === indexToEdit ? { ...item, title: addelement } : item
+          index === indexToEdit ? { ...item, title: addelement,date:checkDate,description:postDescription } : item
         );
 
         // localStorage.setItem("data", JSON.stringify(arr));
@@ -40,17 +43,31 @@ const Todo = () => {
 
       settodolist((prev) => [
         ...prev,
-        { title: addelement, status: "To Do", isCompleted: false },
+        {
+          title: addelement,
+          date: checkDate,
+          description: postDescription,
+          status: "To Do",
+          isCompleted: false,
+        },
       ]);
       localStorage.setItem(
         "data",
         JSON.stringify([
           ...todolist,
-          { title: addelement, status: "To Do", isCompleted: false },
+          {
+            title: addelement,
+            date: checkDate,
+            description: postDescription,
+            status: "To Do",
+            isCompleted: false,
+          },
         ])
       );
     }
     setaddelement("");
+    setcheckDate("");
+    setPostDescription("");
   };
 
   const removeFromList = (indexToRemove) => {
@@ -64,6 +81,8 @@ const Todo = () => {
 
   const editfromlist = (index) => {
     setaddelement(todolist[index]?.title);
+    setcheckDate(todolist[index]?.date);
+    setPostDescription(todolist[index]?.description);
     setIndexToEdit(index);
   };
   const handleCompleteTask = (selectedIndex) => {
@@ -85,6 +104,7 @@ const Todo = () => {
   return (
     <div>
       <div className="head">
+
         <div className="taskbar">
           <div className="tp">
             <p className="tp1">Task done</p>
@@ -97,15 +117,36 @@ const Todo = () => {
             </p>
           </div>
         </div>
+        
         <div className="search">
-          <input
-            onChange={(e) => setaddelement(e.target.value)}
-            value={addelement}
-            class="search_item"
-            placeholder="  write your next task"
-          ></input>
-          <img className="sp" src={plus} onClick={() => addList()} />
+          <div className="title">
+            <input
+              onChange={(e) => setaddelement(e.target.value)}
+              value={addelement}
+              class="search_item"
+              placeholder="Write your next task"
+            ></input>
+            <input
+              className="date"
+              type="date"
+              placeholder="dd-mm-yy"
+              onChange={(e) => setcheckDate(e.target.value)}
+              value={checkDate}
+            ></input>
+          </div>
+
+          <textarea
+            className="discription"
+            onChange={(e) => setPostDescription(e.target.value)}
+            value={postDescription}
+            type="text"
+            placeholder="Description"
+          ></textarea>
+          <div className="sp_parant"  onClick={() => addList()} >
+            <img className="sp" src={plus}/>
+          </div>
         </div>
+
         {todolist.map((item, index) => (
           <div className="contents">
             <div className="static">
@@ -116,7 +157,12 @@ const Todo = () => {
                 onClick={() => handleCompleteTask(index)}
                 width={27}
               />
-              <p className="text">{item.title}</p>
+            </div>
+            <div className="notes">
+              <p className="text_content_title">{item.title}</p>
+              <p className="text_content_date">{item.date}</p>
+              <p className="text_content_description">{item.description}</p>
+              
             </div>
 
             <div className="edit">
